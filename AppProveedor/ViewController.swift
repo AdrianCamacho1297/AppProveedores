@@ -11,7 +11,6 @@ import SQLite3
 class ViewController: UIViewController {
     
     var proveedores = [Proveedor]()
-    
     var adminBD : AdminBD = AdminBD()
 
     @IBOutlet weak var txtClave: UITextField!
@@ -56,14 +55,16 @@ class ViewController: UIViewController {
     }
     
     @IBAction func btnRead(_ sender: UIButton) {
+        var prov = [Proveedor]()
         let query : String = "SELECT * FROM proveedores ORDER BY claProveedor ASC"
         let pointQuery : OpaquePointer? = adminBD.read(query: query)
         while sqlite3_step(pointQuery) == SQLITE_ROW {
             let clave = Int(sqlite3_column_int(pointQuery, 0))
             let nombre = String(describing: String(cString: sqlite3_column_text(pointQuery, 1)))
             let correo = String(describing: String(cString: sqlite3_column_text(pointQuery, 2)))
-            proveedores.append(Proveedor(clave: clave, nombre: nombre, correo: correo))
+            prov.append(Proveedor(clave: clave, nombre: nombre, correo: correo))
         }
+        proveedores = prov
         self.performSegue(withIdentifier: "segueListProveedor", sender: self)
     }
     
